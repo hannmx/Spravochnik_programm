@@ -1,36 +1,44 @@
+## Основная часть ##
+
 import functions_book as fb
 import functions_read_write_file as frw
-import checking_file as cf
 
-#Создание объекта Member и его методов#
-class Member:
-
-    #Словарь пользователя где ключи - имя поля а в значениях - значение этого поля
-    def __init__(self, listfields, arg):
-        self.data = dict(zip(listfields, arg))
-
-    #Возвращение имени и фамилии одной строкой
-    def identifier(self):
-        return ' '.join([self.data['Имя'], self.data['Фамилия']]).lower()
+name = 'data.pickle' # имя файла данных
+data = frw.readfile(name) # при запуске читаем данные из файла получаем список экземпляров класса
+listfields = ['имя','фамилия','номер','возраст','город'] # поля ключей и подсказок ввода
+ 
+while True:
     
-    #Принимает ключ и новое значение. Изменяет значение по ключу
-            #или создает новую запись если ключа еще нет
-    def parametr(self, key, values):
-        self.data[key] = values
-
-    #Возвращает значение поля возраст
-    def years(self):
-        return self.data['возраст']
- 
-    #Возвращает множество значений словаря в нижнем регистре
-    def show(self):
-        return set(map(str.lower, list(self.data.values())))
- 
-    #Возвращает список ключей
-    def change(self):
-        return list(self.data.keys())
- 
-    #Возвращает строку значений
-    def __str__(self):
-        return ' '.join(list(self.data.values()))
+    print('''\n\t\tКоманды для работы со справочником:
+    \t\tПросмотр всех записей справочника - 1
+    \t\tПоиск по справочнику - 2
+    \t\tДобавление новой записи - 3
+    \t\t Удаление записи из справочника по Имени и Фамилии - 4
+    \t\tИзменение любого поля в определенной записи справочника - 5 
+    \t\tВывод возраста человека (записи) по Имени и Фамилии - 6
+     \t\tВыход - 0 \n''')
+    
+    command = input('Команда: > ')
+    
+    if command == '1':
+        fb.look(data)
+    elif command == '2':
+        line = set(input('что искать> ').lower().split())#любая подстрока (имя, имя фамилия, фамилия, номер)
+        fb.search(data,line)
+    elif command == '3':
+        print('Введите данные или * при их отсутствии')
+        fb.addmember(listfields, data, name)
+    elif command == '4':
+        fb.del_memb(data)
+    elif command == '5':
+        member = input('имя фамилия > ').lower()
+        fb.change(data, member)
+    elif command == '6':
+        member = input('имя фамилия > ').lower()
+        fb.search_age(data,member)
+        
+    elif command == '0':
+        frw.savedata(data,name)
+        print("Работа завершена") 
+        raise SystemExit
 
